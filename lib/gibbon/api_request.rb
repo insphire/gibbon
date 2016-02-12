@@ -9,7 +9,7 @@ module Gibbon
 
       begin
         response = self.rest_client.post do |request|
-          configure_request(request: request, params: params, headers: headers, body: MultiJson.dump(body))
+          configure_request(request: request, params: params, headers: headers, body: JSON.dump(body))
         end
         parse_response(response.body)
       rescue => e
@@ -22,7 +22,7 @@ module Gibbon
 
       begin
         response = self.rest_client.patch do |request|
-          configure_request(request: request, params: params, headers: headers, body: MultiJson.dump(body))
+          configure_request(request: request, params: params, headers: headers, body: JSON.dump(body))
         end
         parse_response(response.body)
       rescue => e
@@ -35,7 +35,7 @@ module Gibbon
 
       begin
         response = self.rest_client.put do |request|
-          configure_request(request: request, params: params, headers: headers, body: MultiJson.dump(body))
+          configure_request(request: request, params: params, headers: headers, body: JSON.dump(body))
         end
         parse_response(response.body)
       rescue => e
@@ -100,7 +100,7 @@ module Gibbon
 
       begin
         if error.is_a?(Faraday::Error::ClientError) && error.response
-          parsed_response = MultiJson.load(error.response[:body])
+          parsed_response = JSON.load(error.response[:body])
 
           if parsed_response
             error_params[:body] = parsed_response
@@ -111,7 +111,7 @@ module Gibbon
           error_params[:status_code] = error.response[:status]
           error_params[:raw_body] = error.response[:body]
         end
-      rescue MultiJson::ParseError
+      rescue JSON::ParserError
         error_params[:status_code] = error.response[:status]
       end
 
@@ -144,8 +144,8 @@ module Gibbon
 
       if response_body && !response_body.empty?
         begin
-          parsed_response = MultiJson.load(response_body)
-        rescue MultiJson::ParseError
+          parsed_response = JSON.load(response_body)
+        rescue JSON::ParserError
           error = MailChimpError.new("Unparseable response: #{response_body}")
           error.title = "UNPARSEABLE_RESPONSE"
           error.status_code = 500

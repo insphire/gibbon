@@ -1,5 +1,4 @@
 require 'faraday'
-require 'multi_json'
 require 'cgi'
 
 require 'gibbon/gibbon_error'
